@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  node_backend:
+    container_name: example
+    image: example:0.0.5
+    build:
+      context: .
+    ports:
+      - "3001:3001"
+    environment:
+      - EXTERNAL_PORT=3001
+      - PGDATABASE=example_db
+      - PGUSER=root
+      - PGPASSWORD=root
+      - PGHOST=node_db
+    depends_on:
+      - node_db
+  node_db:
+    container_name: node_db
+    image: "postgres:12"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=example_db
+    volumes:
+      - nps_data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: miriamnavamucino@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - 5050:80
+    depends_on:
+      - node_db
+
+volumes:
+  nps_data: {}
